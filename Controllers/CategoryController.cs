@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
@@ -11,10 +12,11 @@ using Shop.Models;
 // https://localhost:5001
 namespace Shop.Controllers
 {
-    [Route("category")]
+    [Route("v1/categories")]
     public class CategoryController : ControllerBase
     {
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> Get(
             [FromServices] DataContext context
         )
@@ -25,6 +27,7 @@ namespace Shop.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> GetById(
             int id,
             [FromServices] DataContext context
@@ -36,6 +39,7 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Post(
             [FromBody] Category model,
             [FromServices] DataContext context
@@ -58,6 +62,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Put(
             int id,
             [FromBody] Category model,
@@ -90,6 +95,7 @@ namespace Shop.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Delete(int id, [FromServices] DataContext context)
         {
             var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
